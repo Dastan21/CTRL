@@ -1,0 +1,580 @@
+extract obj_props
+
+// constants & variables
+OFFSET = {
+	X: 15,
+	Y: 435
+}
+let groups = {
+	press: {},
+	release: {},
+	hold: {},
+	swipe: {},
+	multiclick: {}
+}
+let setups = {
+	release: false,
+	hold: false,
+	swipe: false,
+	multiclick: false
+}
+
+
+// basic triggers
+hidden_group = ?g
+hidden_group.alpha(0)
+hide_player()
+toggle_bg_effect(false)
+$.add(obj { OBJ_ID: 22 }) // no borders effect
+$.add(obj { // follow x move
+	OBJ_ID: obj_ids.triggers.MOVE,
+	X: 285,
+	Y: -45,
+	DURATION: 999,
+	LOCK_TO_PLAYER_X: true,
+	TARGET: ?g
+})
+
+
+/* PRESS TRIGGERS */
+groups.press.right_touch = ?g
+groups.press.right_stop = ?g
+groups.press.right_target = ?g
+groups.press.left_touch = ?g
+groups.press.left_target = ?g
+// RIGHT
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.TOUCH,
+	X: OFFSET.X,
+	Y: OFFSET.Y,
+	DUAL_MODE: true,
+	TOGGLE_MODE: 1,
+	HOLD_MODE: true,
+	TARGET: groups.press.right_touch
+})
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.SPAWN,
+	X: OFFSET.X + 30,
+	Y: OFFSET.Y,
+	SPAWN_DURATION: 0.01,
+	SPAWN_TRIGGERED: true,
+	MULTI_TRIGGER: true,
+	GROUPS: groups.press.right_touch,
+	TARGET: groups.press.right_stop
+})
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.STOP,
+	X: OFFSET.X + 30,
+	Y: OFFSET.Y - 30,
+	SPAWN_TRIGGERED: true,
+	MULTI_TRIGGER: true,
+	GROUPS: groups.press.right_stop,
+	TARGET: groups.press.left_touch
+})
+// LEFT
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.TOUCH,
+	X: OFFSET.X,
+	Y: OFFSET.Y - 30,
+	DUAL_MODE: false,
+	TOGGLE_MODE: 1,
+	HOLD_MODE: true,
+	TARGET: groups.press.left_touch
+})
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.SPAWN,
+	X: OFFSET.X + 60,
+	Y: OFFSET.Y,
+	SPAWN_DURATION: 0.02,
+	SPAWN_TRIGGERED: true,
+	MULTI_TRIGGER: true,
+	GROUPS: groups.press.right_stop,
+	TARGET: groups.press.right_target
+})
+$.add(obj {
+	OBJ_ID: obj_ids.triggers.SPAWN,
+	X: OFFSET.X + 60,
+	Y: OFFSET.Y - 30,
+	SPAWN_DURATION: 0.02,
+	SPAWN_TRIGGERED: true,
+	MULTI_TRIGGER: true,
+	GROUPS: groups.press.left_touch,
+	TARGET: groups.press.left_target
+})
+
+
+/* RELEASE TRIGGERS */
+setup_release = () {
+	groups.release.right_touch = ?g
+	groups.release.right_stop = ?g
+	groups.release.right_target = ?g
+	groups.release.left_touch = ?g
+	groups.release.left_target = ?g
+	
+	// RIGHT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOUCH,
+		X: OFFSET.X,
+		Y: OFFSET.Y - 60,
+		DUAL_MODE: true,
+		TOGGLE_MODE: 2,
+		HOLD_MODE: true,
+		TARGET: groups.release.right_touch
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y - 60,
+		SPAWN_DURATION: 0.01,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.release.right_touch,
+		TARGET: groups.release.right_stop
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.STOP,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y - 90,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.release.right_stop,
+		TARGET: groups.release.left_touch
+	})
+	
+	// LEFT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOUCH,
+		X: OFFSET.X,
+		Y: OFFSET.Y - 90,
+		DUAL_MODE: false,
+		TOGGLE_MODE: 2,
+		HOLD_MODE: true,
+		TARGET: groups.release.left_touch
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y - 60,
+		SPAWN_DURATION: 0.02,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.release.right_stop,
+		TARGET: groups.release.right_target
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y - 90,
+		SPAWN_DURATION: 0.02,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.release.left_touch,
+		TARGET: groups.release.left_target
+	})
+
+	setups.release = true
+}
+
+
+/* HOLD TRIGGERS */
+setup_hold = (delay: @number) {
+	if delay <= 0 { throw "delay cannot be 0 or less" }
+
+	groups.hold.stop = ?g
+	groups.hold.right_target = ?g
+	groups.hold.left_target = ?g
+
+
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.STOP,
+		X: OFFSET.X,
+		Y: OFFSET.Y + 45,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.release.left_touch,
+		TARGET: groups.hold.stop
+	})
+
+	// RIGHT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 60,
+		SPAWN_DURATION: delay,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.right_target, groups.hold.stop],
+		TARGET: groups.hold.right_target
+	})
+
+	// LEFT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 30,
+		SPAWN_DURATION: delay,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.left_target, groups.hold.stop],
+		TARGET: groups.hold.left_target
+	})
+
+	setups.hold = true
+}
+
+
+/* SWIPE TRIGGERS */
+setup_swipe = () {
+	groups.swipe.right_toggle = ?g
+	groups.swipe.right_target = ?g
+	groups.swipe.left_toggle = ?g
+	groups.swipe.left_target = ?g
+	
+	// RIGHT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X - 45,
+		Y: OFFSET.Y + 120,
+		TARGET: groups.swipe.right_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X,
+		Y: OFFSET.Y + 120,
+		ACTIVATE_GROUP: true,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.left_target,
+		TARGET: groups.swipe.right_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 120,
+		SPAWN_DURATION: 0,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.right_target, groups.swipe.right_toggle],
+		TARGET: groups.swipe.right_target
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y + 120,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.release.left_target, groups.swipe.right_target],
+		TARGET: groups.swipe.right_toggle
+	})
+	
+	// LEFT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X - 45,
+		Y: OFFSET.Y + 90,
+		TARGET: groups.swipe.left_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X,
+		Y: OFFSET.Y + 90,
+		ACTIVATE_GROUP: true,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.right_target,
+		TARGET: groups.swipe.left_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 90,
+		SPAWN_DURATION: 0,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.left_target, groups.swipe.left_toggle],
+		TARGET: groups.swipe.left_target
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y + 90,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.release.right_target, groups.swipe.left_target],
+		TARGET: groups.swipe.left_toggle
+	})
+
+	setups.swipe = true
+}
+
+
+setup_multiclick = (delay, clicks) {
+	if delay <= 0 { throw "delay cannot be 0 or less" }
+	if clicks < 2 { throw "clicks cannot be less than 2" }
+
+	groups.multiclick.right_move_target = ?g
+	groups.multiclick.right_move = ?g
+	groups.multiclick.right_spawn = ?g
+	groups.multiclick.right_toggle = ?g
+	groups.multiclick.right_collision = ?g
+	groups.multiclick.left_move_target = ?g
+	groups.multiclick.left_move = ?g
+	groups.multiclick.left_spawn = ?g
+	groups.multiclick.left_toggle = ?g
+	groups.multiclick.left_collision = ?g
+	dynamic_right = ?b
+	dynamic_left = ?b
+	static_right = ?b
+	static_left = ?b
+	
+	// RIGHT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.MOVE,
+		X: OFFSET.X,
+		Y: OFFSET.Y + 240,
+		MOVE_X: 30,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.right_target,
+		TARGET: groups.multiclick.right_move
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 240,
+		SPAWN_DURATION: delay,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.right_target, groups.multiclick.right_toggle],
+		TARGET: groups.multiclick.right_spawn
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y + 240,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.right_target,
+		TARGET: groups.multiclick.right_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.MOVE,
+		X: OFFSET.X + 90,
+		Y: OFFSET.Y + 240,
+		USE_TARGET: true,
+		TARGET_POS: groups.multiclick.right_move_target,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.right_spawn,
+		TARGET: groups.multiclick.right_move
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 120,
+		Y: OFFSET.Y + 240,
+		ACTIVATE_GROUP: true,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.right_spawn,
+		TARGET: groups.multiclick.right_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.COLLISION,
+		X: OFFSET.X + 150,
+		Y: OFFSET.Y + 240,
+		BLOCK_A: dynamic_right,
+		BLOCK_B: static_right,
+		ACTIVATE_GROUP: true,
+		ACTIVATE_ON_EXIT: false,
+		TARGET: groups.multiclick.right_collision
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 180,
+		Y: OFFSET.Y + 240,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.right_collision,
+		TARGET: groups.multiclick.right_spawn
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.STOP,
+		X: OFFSET.X + 210,
+		Y: OFFSET.Y + 240,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.right_collision,
+		TARGET: groups.multiclick.right_toggle
+	})
+	$.add(obj {
+		OBJ_ID: 1816,
+		X: OFFSET.X - 30,
+		Y: OFFSET.Y + 210,
+		DYNAMIC_BLOCK: true,
+		BLOCK_A: dynamic_right,
+		SCALING: 0.5,
+		GROUPS: groups.multiclick.right_move
+	})
+	$.add(obj {
+		OBJ_ID: 916,
+		X: OFFSET.X - 30,
+		Y: OFFSET.Y + 210,
+		GROUPS: groups.multiclick.right_move_target
+	})
+	$.add(obj {
+		OBJ_ID: 1816,
+		X: OFFSET.X + 30 * (clicks - 1),
+		Y: OFFSET.Y + 210,
+		BLOCK_A: static_right
+	})
+
+	// LEFT
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.MOVE,
+		X: OFFSET.X,
+		Y: OFFSET.Y + 180,
+		MOVE_X: 30,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.left_target,
+		TARGET: groups.multiclick.left_move
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 30,
+		Y: OFFSET.Y + 180,
+		SPAWN_DURATION: delay,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: [groups.press.left_target, groups.multiclick.left_toggle],
+		TARGET: groups.multiclick.left_spawn
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 60,
+		Y: OFFSET.Y + 180,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.press.left_target,
+		TARGET: groups.multiclick.left_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.MOVE,
+		X: OFFSET.X + 90,
+		Y: OFFSET.Y + 180,
+		USE_TARGET: true,
+		TARGET_POS: groups.multiclick.left_move_target,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.left_spawn,
+		TARGET: groups.multiclick.left_move
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.TOGGLE,
+		X: OFFSET.X + 120,
+		Y: OFFSET.Y + 180,
+		ACTIVATE_GROUP: true,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.left_spawn,
+		TARGET: groups.multiclick.left_toggle
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.COLLISION,
+		X: OFFSET.X + 150,
+		Y: OFFSET.Y + 180,
+		BLOCK_A: dynamic_left,
+		BLOCK_B: static_left,
+		ACTIVATE_GROUP: true,
+		ACTIVATE_ON_EXIT: false,
+		TARGET: groups.multiclick.left_collision
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.SPAWN,
+		X: OFFSET.X + 180,
+		Y: OFFSET.Y + 180,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.left_collision,
+		TARGET: groups.multiclick.left_spawn
+	})
+	$.add(obj {
+		OBJ_ID: obj_ids.triggers.STOP,
+		X: OFFSET.X + 210,
+		Y: OFFSET.Y + 180,
+		SPAWN_TRIGGERED: true,
+		MULTI_TRIGGER: true,
+		GROUPS: groups.multiclick.left_collision,
+		TARGET: groups.multiclick.left_toggle
+	})
+	$.add(obj {
+		OBJ_ID: 1816,
+		X: OFFSET.X - 30,
+		Y: OFFSET.Y + 150,
+		DYNAMIC_BLOCK: true,
+		BLOCK_A: dynamic_left,
+		SCALING: 0.5,
+		GROUPS: groups.multiclick.left_move
+	})
+	$.add(obj {
+		OBJ_ID: 916,
+		X: OFFSET.X - 30,
+		Y: OFFSET.Y + 150,
+		GROUPS: groups.multiclick.left_move_target
+	})
+	$.add(obj {
+		OBJ_ID: 1816,
+		X: OFFSET.X + 30 * (clicks - 1),
+		Y: OFFSET.Y + 150,
+		BLOCK_A: static_left
+	})
+
+	setups.multiclick = true
+}
+
+
+return {
+	press_right: (macro: @macro) {
+		return $.extend_trigger_func(groups.press.right_target, macro)
+	},
+	press_left: (macro: @macro) {
+		return $.extend_trigger_func(groups.press.left_target, macro)
+	},
+	release_right: (macro: @macro) {
+		if !setups.release { setup_release() }
+		return $.extend_trigger_func(groups.release.right_target, macro)
+	},
+	release_left: (macro: @macro) {
+		if !setups.release { setup_release() }
+		return $.extend_trigger_func(groups.release.left_target, macro)
+	},
+	hold_right: (macro: @macro, delay: @number = 0.5) {
+		if !setups.release { setup_release() }
+		if !setups.hold { setup_hold(delay) }
+		return $.extend_trigger_func(groups.hold.right_target, macro)
+	},
+	hold_left: (macro: @macro, delay: @number = 0.5) {
+		if !setups.release { setup_release() }
+		if !setups.hold { setup_hold(delay) }
+		return $.extend_trigger_func(groups.hold.left_target, macro)
+	},
+	swipe_right_to_left: (macro: @macro) {
+		if !setups.release { setup_release() }
+		if !setups.swipe { setup_swipe() }
+		return $.extend_trigger_func(groups.swipe.right_target, macro)
+	},
+	swipe_left_to_right: (macro: @macro) {
+		if !setups.release { setup_release() }
+		if !setups.swipe { setup_swipe() }
+		return $.extend_trigger_func(groups.swipe.left_target, macro)
+	},
+	multiclick_left: (macro: @macro, delay: @number = 0.3, clicks: @number = 2) {
+		if !setups.multiclick { setup_multiclick(delay, clicks) }
+		return $.extend_trigger_func(groups.multiclick.right_collision, macro)
+	},
+	multiclick_right: (macro: @macro, delay: @number = 0.3, clicks: @number = 2) {
+		if !setups.multiclick { setup_multiclick(delay, clicks) }
+		return $.extend_trigger_func(groups.multiclick.left_collision, macro)
+	},
+	hidden_group: hidden_group
+}

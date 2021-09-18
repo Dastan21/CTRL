@@ -1,0 +1,45 @@
+ctrl = import spwn_controls
+
+// groups have to be known
+move = 1g
+hold = 2g
+swipe = 3g
+multiclick = 4g
+
+// press-release -> (macro)
+ctrl.press_right((){
+    move.move(0, -10, 0.1)
+})
+ctrl.press_left((){
+    move.move(0, 10, 0.1)
+})
+ctrl.release_right((){
+    move.move(0, 10, 0.1)
+})
+ctrl.release_left((){
+    move.move(0, -10, 0.1)
+})
+
+// hold -> (macro, delay = 0.5)
+ctrl.hold_right((){
+    hold.move(0, -10, 0.1)
+}, 1)
+ctrl.hold_left((){
+    hold.move(0, 10, 0.1)
+}, 1)
+
+// swipe -> (macro)
+ctrl.swipe_right_to_left((){
+	swipe.move(0, -10, 0.1)
+})
+ctrl.swipe_left_to_right((){
+	swipe.move(0, 10, 0.1)
+})
+
+// multiclick -> (macro, delay = 0.3, clicks = 2)
+ctrl.multiclick_right((){
+	multiclick.move(0, -10, 0.1)
+}, 1, 4)
+ctrl.multiclick_left((){
+	multiclick.move(0, 10, 0.1)
+}, 1, 4)
