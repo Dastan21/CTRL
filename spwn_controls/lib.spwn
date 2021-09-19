@@ -407,7 +407,7 @@ setup_multiclick = (delay, clicks) {
 		TARGET: groups.multiclick.right_toggle
 	})
 	$.add(obj {
-		OBJ_ID: 1816,
+		OBJ_ID: obj_ids.special.COLLISION_BLOCK,
 		X: OFFSET.X - 30,
 		Y: OFFSET.Y + 210,
 		DYNAMIC_BLOCK: true,
@@ -416,13 +416,13 @@ setup_multiclick = (delay, clicks) {
 		GROUPS: groups.multiclick.right_move
 	})
 	$.add(obj {
-		OBJ_ID: 916,
+		OBJ_ID: 1764, // small dot
 		X: OFFSET.X - 30,
 		Y: OFFSET.Y + 210,
 		GROUPS: groups.multiclick.right_move_target
 	})
 	$.add(obj {
-		OBJ_ID: 1816,
+		OBJ_ID: obj_ids.special.COLLISION_BLOCK,
 		X: OFFSET.X + 30 * (clicks - 1),
 		Y: OFFSET.Y + 210,
 		BLOCK_A: static_right
@@ -508,7 +508,7 @@ setup_multiclick = (delay, clicks) {
 		TARGET: groups.multiclick.left_toggle
 	})
 	$.add(obj {
-		OBJ_ID: 1816,
+		OBJ_ID: obj_ids.special.COLLISION_BLOCK,
 		X: OFFSET.X - 30,
 		Y: OFFSET.Y + 150,
 		DYNAMIC_BLOCK: true,
@@ -517,13 +517,13 @@ setup_multiclick = (delay, clicks) {
 		GROUPS: groups.multiclick.left_move
 	})
 	$.add(obj {
-		OBJ_ID: 916,
+		OBJ_ID: 1764, // small dot
 		X: OFFSET.X - 30,
 		Y: OFFSET.Y + 150,
 		GROUPS: groups.multiclick.left_move_target
 	})
 	$.add(obj {
-		OBJ_ID: 1816,
+		OBJ_ID: obj_ids.special.COLLISION_BLOCK,
 		X: OFFSET.X + 30 * (clicks - 1),
 		Y: OFFSET.Y + 150,
 		BLOCK_A: static_left
