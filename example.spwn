@@ -1,4 +1,4 @@
-ctrl = import spwn_controls
+ctrl = import controls
 
 // groups have to be known
 move = 1g
