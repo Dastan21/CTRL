@@ -9,6 +9,9 @@ SPWN library adding more in-game controls.
 - Swipe
 - Multiclick
 
+## How to use
+See [example.spwn](./example.spwn)
+
 ## Exports
 ```spwn
 press_right(macro)
