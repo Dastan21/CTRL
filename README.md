@@ -1,6 +1,6 @@
 # SPWN-Controls
 
-SPWN library which adds more in-game controls.
+SPWN library adding more in-game controls.
 
 ## Controls
 - Press
