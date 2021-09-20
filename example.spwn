@@ -1,23 +1,23 @@
 ctrl = import controls
 
 // groups have to be known
-move = 1g
+click = 1g
 hold = 2g
 swipe = 3g
 multiclick = 4g
 
 // press-release -> (macro)
 ctrl.press_right((){
-    move.move(0, -10, 0.1)
+    click.move(0, -10, 0.1)
 })
 ctrl.press_left((){
-    move.move(0, 10, 0.1)
+    click.move(0, 10, 0.1)
 })
 ctrl.release_right((){
-    move.move(0, 10, 0.1)
+    click.move(0, 10, 0.1)
 })
 ctrl.release_left((){
-    move.move(0, -10, 0.1)
+    click.move(0, -10, 0.1)
 })
 
 // hold -> (macro, delay = 0.5)
