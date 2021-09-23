@@ -1,4 +1,4 @@
-# SPWN-Controls
+# CTRL
 
 SPWN library adding more in-game controls.
 
