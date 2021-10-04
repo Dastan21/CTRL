@@ -1,3 +1,5 @@
+#[cache_output]
+
 extract obj_props
 
 // constants & variables
